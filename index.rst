@@ -66,13 +66,22 @@ All other information about the image (including detailed information about the 
 
 The command should be executed at `startIntegration` time; there are no `nextVisit` events for raw calibration images.
 
-.. _retrieving-ap-images:
+.. _retrieving-ap-template-images:
 
-Retrieving template and calibration images
+Retrieving Template and Calibration Images
 ==========================================
 
 The Alert Production pipeline is expected to retrieve template and master calibration images via a configured Data Butler.
 A special Datastore is anticipated to be provided for these images that would have higher performance and greater uptime than the normal Data Backbone.
+
+.. _retrieving-ap-science-images:
+
+Retrieving Science Images
+=========================
+
+The Alert Production pipeline retrieves science images (one or two per visit) via a Data Butler configured to use the distributor provided as an argument.
+The `get()` call to that Data Butler must block until the image is received and registered.
+The Alert Production should timeout and exit if no image has been received within a configurable period, e.g. 2 minutes.
 
 .. _retrieving-ppdb-items:
 
