@@ -21,6 +21,7 @@ Introduction
 ============
 
 This document describes how the Alert Production or Raw Calibration Validation pipelines are invoked and how they communicate with the Butler and Prompt Products Database.
+It also describes how metrics they produce are returned to Summit systems.
 
 
 .. _invoking-ap:
@@ -104,6 +105,23 @@ Writing Alerts to Alert Distribution
 
 The Alert Production pipeline should convert DIASources and associated history and postage stamp images into Alerts in Apache Avro format.
 It should then issue Kafka messages to convey them to Alert Distribution and its downstream filters and brokers.
+
+.. _dispatching-metrics:
+
+Dispatching Metrics to the EFD
+==============================
+
+The metrics required by :lse:`72` §2.1.1 will be written out by the pipelines as small Butler datasets in JSON format.
+The ``faro`` and ``lsst.verify`` packages are the reference for how to do this.
+The resulting metrics will be dispatched to the Engineering and Facilities Database by communicating directly with its Summit InfluxDB instance.
+Code similar to that in ``lsst.verify`` that dispatches to SQuaSH will be used.
+It will be necessary to ensure that appropriate information from the Butler data ID is made available to associate the metric with a visit or an exposure and/or a detector.
+
+Sending these metrics as SAL messages is not thought to be necessary, as CSCs requiring the metric information are likely to want their time history (best obtained by an InfluxDB query) and can request single values if needed..
+This simplification also eliminates the translations from pipeline metric to SAL message, from SAL message to Kafka, and from Kafka to InfluxDB.
+
+Replication of these metrics to other EFD instances, including the relational Transformed EFD (:sqr:`58`), will still occur.
+
 
 .. .. rubric:: References
 
