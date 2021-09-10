@@ -36,14 +36,14 @@ Initial batch implementation
 ----------------------------
 
 Until a full-featured Prompt Processing execution framework is available, the Alert Production pipeline will be invoked as batch jobs submitted to HTCondor or SLURM.
-One batch job will be submitted per camera CCD (9 for ComCam, 189 for LSSTCam).
-The batch job will execute a process from the Unix command line: either a `CmdLineTask` via its command-line wrapper, a `pipe_drivers` script, or a `PipelineTask` via its command-line wrapper, as designated by the Alert Production developers.
-That command must accept as an argument the name of the CCD to be processed, the RA and declination of the telescope boresight, the name of the filter to be used for the observation, if any, and the anticipated exposure time.
-The command will also accept as parameters the location of the distributor responsible for providing the input image or images for the Alert Production pipeline and the name(s) of the image(s) to be retrieved.
-The values of all of those arguments will be provided by the Prompt Processing system based on the `nextVisit` event.
+One batch job will be submitted per camera CCD (9 for ComCam, 189 for LSSTCam, or 193 if guide CCDs are used for science).
+The batch job will execute a shell script which is in turn expected to execute one or more ``pipetask`` commands.
+The script must accept as arguments the name of the CCD to be processed, the RA and declination of the telescope boresight, the name of the filter to be used for the observation, if any, and the anticipated exposure time.
+The script will also accept as parameters the location of the Butler responsible for providing the input image or images for the Alert Production pipeline and the name(s) of the image(s) to be retrieved.
+The values of all of those arguments will be provided by the Prompt Processing system based on the ``nextVisit`` event.
 All other information about the image (including detailed information about the shutter motion used to compute more accurate exposure times) must be obtained from the image headers.
 
-The batch job will be submitted no later than the `startIntegration` event, although there may be some latency until it starts running.
+The batch job will be submitted no later than the ``startIntegration`` event, although there may be some latency until it starts running.
 
 .. _invoking-ap-dynamic:
 
@@ -54,17 +54,17 @@ When a Prompt Processing execution framework is available, it will directly invo
 One command will be executed per camera CCD.
 All of the same arguments will be provided.
 
-The command should be executed at `nextVisit` time, although it's possible that for technical reasons it will have to be delayed until `startIntegration`.
+The command should be executed at ``nextVisit`` time, although it's possible that for technical reasons it will have to be delayed until ``startIntegration``.
 
 .. _invoking-raw-calib:
 
 Raw calibration pipeline
 ------------------------
 
-The raw calibration pipeline will be invoked with the "intent" (dark, flat, CBP, etc.) of the image, the name of the CCD, the name of any filter in place, the anticipated exposure time, the location of the distributor, and the name of the image.
+The raw calibration pipeline will be invoked with the "intent" (dark, flat, CBP, etc.) of the image, the name of the CCD, the name of any filter in place, the anticipated exposure time, the location of the Butler, and the name of the image.
 All other information about the image (including detailed information about the shutter motion used to compute more accurate exposure times) must be obtained from the image headers.
 
-The command should be executed at `startIntegration` time; there are no `nextVisit` events for raw calibration images.
+The command should be executed at ``startIntegration`` time; there are no ``nextVisit`` events for raw calibration images.
 
 .. _retrieving-ap-template-images:
 
@@ -79,7 +79,7 @@ A special Datastore is anticipated to be provided for these images that would ha
 Retrieving Science Images
 =========================
 
-The Alert Production pipeline retrieves science images (one or two per visit) via a Data Butler configured to use the distributor provided as an argument.
+The Alert Production pipeline retrieves science images (one or two per visit) via the Data Butler provided as an argument.
 The `get()` call to that Data Butler must block until the image is received and registered.
 The Alert Production should timeout and exit if no image has been received within a configurable period, e.g. 2 minutes.
 
@@ -95,8 +95,7 @@ Historic DIASources, DIAObjects, and the identifiers for DRP Objects should then
 New DIASources and versions of DIAObjects should then be written, again using the PPDB interface.
 The values/columns for these objects need to be in the form specified by the DPDD (LSE-163), with appropriate units and descriptions.
 
-The PPDB interface is currently specified to use `afw.table`.
-A different Python object providing equivalent capabilities could be used if desired by both sides.
+The PPDB interface is currently specified to use ``pandas``.
 
 .. _writing-alerts:
 
