@@ -1,7 +1,7 @@
 .. image:: https://img.shields.io/badge/dmtn--092-lsst.io-brightgreen.svg
    :target: https://dmtn-092.lsst.io
-.. image:: https://travis-ci.org/lsst-dm/dmtn-092.svg
-   :target: https://travis-ci.org/lsst-dm/dmtn-092
+.. image:: https://github.com/lsst-dm/dmtn-092/workflows/CI/badge.svg
+   :target: https://github.com/lsst-dm/dmtn-092/actions/
 ..
   Uncomment this section and modify the DOI strings to include a Zenodo DOI badge in the README
   .. image:: https://zenodo.org/badge/doi/10.5281/zenodo.#####.svg
@@ -21,7 +21,7 @@ How the AP pipeline is invoked and how it communicates with the Butler and Promp
 - Publication URL: https://dmtn-092.lsst.io
 - Alternative editions: https://dmtn-092.lsst.io/v
 - GitHub repository: https://github.com/lsst-dm/dmtn-092
-- Build system: https://travis-ci.org/lsst-dm/dmtn-092
+- Build system: https://github.com/lsst-dm/dmtn-092/actions/
 
 
 Build this technical note
